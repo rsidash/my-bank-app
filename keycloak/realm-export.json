@@ -24,11 +24,29 @@
       "serviceAccountsEnabled": true,
       "protocol": "openid-connect",
       "defaultClientScopes": ["notifications"]
+    },
+    {
+      "clientId": "cash-service",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "cash-service-secret",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "protocol": "openid-connect",
+      "defaultClientScopes": ["accounts", "notifications"]
     }
   ],
   "clientScopes": [
     {
       "name": "notifications",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true"
+      }
+    },
+    {
+      "name": "accounts",
       "protocol": "openid-connect",
       "attributes": {
         "include.in.token.scope": "true"

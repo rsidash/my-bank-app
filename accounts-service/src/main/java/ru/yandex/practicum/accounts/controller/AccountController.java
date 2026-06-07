@@ -41,6 +41,16 @@ public class AccountController {
                 .toList();
     }
 
+    @PostMapping("/{login}/deposit")
+    public Account deposit(@PathVariable String login, @RequestBody Map<String, Integer> request) {
+        return accountService.deposit(login, request.get("amount"));
+    }
+
+    @PostMapping("/{login}/withdraw")
+    public Account withdraw(@PathVariable String login, @RequestBody Map<String, Integer> request) {
+        return accountService.withdraw(login, request.get("amount"));
+    }
+
     @PostMapping("/{login}/transfer")
     public ResponseEntity<?> transfer(@PathVariable String login, @RequestBody Map<String, Object> request) {
         String toLogin = (String) request.get("toLogin");
