@@ -1,13 +1,11 @@
 package ru.yandex.practicum.mybankfront.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.yandex.practicum.mybankfront.controller.dto.CashAction;
-import ru.yandex.practicum.mybankfront.controller.stub.AccountStub;
 
 import java.time.LocalDate;
 
@@ -34,9 +32,6 @@ import java.time.LocalDate;
  */
 @Controller
 public class MainController {
-    // TODO: Удалить заглушку, так как используется только для ознакомительных целей
-    @Autowired
-    private AccountStub accountStub;
 
     /**
      * GET /.
@@ -57,7 +52,7 @@ public class MainController {
     @GetMapping("/account")
     public String getAccount(Model model) {
         // TODO: Заменить на то, что описано в комментарии к методу
-        accountStub.fillModel(model, null, null);
+        // accountStub.fillModel(model, null, null);
 
         return "main";
     }
@@ -80,8 +75,8 @@ public class MainController {
             @RequestParam("birthdate") LocalDate birthdate
     ) {
         // TODO: Заменить на то, что описано в комментарии к методу
-        accountStub.setNameAndBirthdate(name, birthdate);
-        accountStub.fillModel(model, null, null);
+        // accountStub.setNameAndBirthdate(name, birthdate);
+        // accountStub.fillModel(model, null, null);
 
         return "main";
     }
@@ -104,7 +99,7 @@ public class MainController {
             @RequestParam("action") CashAction action
             ) {
         // TODO: Заменить на то, что описано в комментарии к методу
-        accountStub.editCash(model, value, action);
+        // accountStub.editCash(model, value, action);
 
         return "main";
     }
@@ -127,7 +122,7 @@ public class MainController {
             @RequestParam("login") String login
     ) {
         // TODO: Заменить на то, что описано в комментарии к методу
-        accountStub.transfer(model, value, login);
+        // accountStub.transfer(model, value, login);
 
         return "main";
     }
