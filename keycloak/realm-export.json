@@ -1,0 +1,46 @@
+{
+  "realm": "my-bank",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "my-bank-front",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "my-bank-front-secret",
+      "redirectUris": ["http://localhost:8080/*"],
+      "webOrigins": ["http://localhost:8080"],
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "protocol": "openid-connect"
+    }
+  ],
+  "users": [
+    {
+      "username": "ivanov",
+      "enabled": true,
+      "firstName": "Иван",
+      "lastName": "Иванов",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "petrov",
+      "enabled": true,
+      "firstName": "Петр",
+      "lastName": "Петров",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ]
+    }
+  ]
+}
