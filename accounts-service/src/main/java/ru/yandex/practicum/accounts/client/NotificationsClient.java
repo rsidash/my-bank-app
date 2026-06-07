@@ -14,8 +14,7 @@ import java.util.Map;
 public class NotificationsClient {
 
     private final RestClient restClient;
-    private final OAuth2AuthorizedClientService authorizedClientService;
-    private final ClientRegistrationRepository clientRegistrationRepository;
+    private final OAuth2AuthorizedClientManager clientManager;
 
     public NotificationsClient(
             @Value("${gateway.url}") String gatewayUrl,
@@ -23,26 +22,28 @@ public class NotificationsClient {
             OAuth2AuthorizedClientService authorizedClientService,
             ClientRegistrationRepository clientRegistrationRepository) {
         this.restClient = builder.baseUrl(gatewayUrl + "/api/notifications").build();
-        this.authorizedClientService = authorizedClientService;
-        this.clientRegistrationRepository = clientRegistrationRepository;
+        var manager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(
+                clientRegistrationRepository, authorizedClientService);
+        manager.setAuthorizedClientProvider(
+                OAuth2AuthorizedClientProviderBuilder.builder().clientCredentials().build());
+        this.clientManager = manager;
     }
 
     public void notifyAccountUpdated(String login, String name) {
-        String token = getClientCredentialsToken();
-        restClient.post()
-                .uri("/account-updated")
-                .header("Authorization", "Bearer " + token)
-                .body(Map.of("login", login, "name", name))
-                .retrieve()
-                .toBodilessEntity();
+        try {
+            String token = getClientCredentialsToken();
+            restClient.post()
+                    .uri("/account-updated")
+                    .header("Authorization", "Bearer " + token)
+                    .body(Map.of("login", login, "name", name))
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (Exception e) {
+            log.warn("Failed to send account update notification: {}", e.getMessage(), e);
+        }
     }
 
     private String getClientCredentialsToken() {
-        var clientRegistration = clientRegistrationRepository.findByRegistrationId("notifications");
-        var clientManager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(
-                clientRegistrationRepository, authorizedClientService);
-        clientManager.setAuthorizedClientProvider(
-                OAuth2AuthorizedClientProviderBuilder.builder().clientCredentials().build());
         var request = OAuth2AuthorizeRequest
                 .withClientRegistrationId("notifications")
                 .principal("accounts-service")

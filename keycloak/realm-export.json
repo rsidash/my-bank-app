@@ -6,7 +6,7 @@
       "clientId": "my-bank-front",
       "enabled": true,
       "publicClient": false,
-      "secret": "my-bank-front-secret",
+      "secret": "${KEYCLOAK_CLIENT_SECRET}",
       "redirectUris": ["http://localhost:8080/*"],
       "webOrigins": ["http://localhost:8080"],
       "standardFlowEnabled": true,
@@ -18,7 +18,7 @@
       "clientId": "accounts-service",
       "enabled": true,
       "publicClient": false,
-      "secret": "accounts-service-secret",
+      "secret": "${ACCOUNTS_CLIENT_SECRET}",
       "standardFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": true,
@@ -29,7 +29,7 @@
       "clientId": "cash-service",
       "enabled": true,
       "publicClient": false,
-      "secret": "cash-service-secret",
+      "secret": "${CASH_CLIENT_SECRET}",
       "standardFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": true,
@@ -40,7 +40,7 @@
       "clientId": "transfer-service",
       "enabled": true,
       "publicClient": false,
-      "secret": "transfer-service-secret",
+      "secret": "${TRANSFER_CLIENT_SECRET}",
       "standardFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": true,
@@ -73,7 +73,7 @@
       "credentials": [
         {
           "type": "password",
-          "value": "password",
+          "value": "${KEYCLOAK_USER_PASSWORD}",
           "temporary": false
         }
       ]
@@ -86,7 +86,7 @@
       "credentials": [
         {
           "type": "password",
-          "value": "password",
+          "value": "${KEYCLOAK_USER_PASSWORD}",
           "temporary": false
         }
       ]
@@ -99,7 +99,7 @@
       "credentials": [
         {
           "type": "password",
-          "value": "password",
+          "value": "${KEYCLOAK_USER_PASSWORD}",
           "temporary": false
         }
       ]

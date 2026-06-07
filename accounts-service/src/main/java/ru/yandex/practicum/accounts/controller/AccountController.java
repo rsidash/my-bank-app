@@ -27,10 +27,7 @@ public class AccountController {
     @PostMapping("/{login}")
     public Account updateAccount(@PathVariable String login, @RequestBody UpdateAccountRequest request) {
         Account account = accountService.updateAccount(login, request.name(), request.birthdate());
-        try {
-            notificationsClient.notifyAccountUpdated(login, request.name());
-        } catch (Exception ignored) {
-        }
+        notificationsClient.notifyAccountUpdated(login, request.name());
         return account;
     }
 

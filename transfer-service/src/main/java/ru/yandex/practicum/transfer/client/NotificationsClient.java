@@ -32,7 +32,7 @@ public class NotificationsClient {
                     .retrieve()
                     .toBodilessEntity();
         } catch (Exception e) {
-            log.warn("Failed to send transfer notification: {}", e.getMessage());
+            log.warn("Failed to send transfer notification: {}", e.getMessage(), e);
         }
     }
 }

@@ -23,30 +23,24 @@ public class NotificationsClient {
     }
 
     public void notifyCashDeposit(String login, int value) {
-        try {
-            String token = tokenService.getToken("notifications");
-            restClient.post()
-                    .uri("/cash-deposit")
-                    .header("Authorization", "Bearer " + token)
-                    .body(Map.of("login", login, "value", value))
-                    .retrieve()
-                    .toBodilessEntity();
-        } catch (Exception e) {
-            log.warn("Failed to send deposit notification: {}", e.getMessage());
-        }
+        sendNotification("/cash-deposit", Map.of("login", login, "value", value));
     }
 
     public void notifyCashWithdraw(String login, int value) {
+        sendNotification("/cash-withdraw", Map.of("login", login, "value", value));
+    }
+
+    private void sendNotification(String uri, Map<String, Object> body) {
         try {
             String token = tokenService.getToken("notifications");
             restClient.post()
-                    .uri("/cash-withdraw")
+                    .uri(uri)
                     .header("Authorization", "Bearer " + token)
-                    .body(Map.of("login", login, "value", value))
+                    .body(body)
                     .retrieve()
                     .toBodilessEntity();
         } catch (Exception e) {
-            log.warn("Failed to send withdraw notification: {}", e.getMessage());
+            log.warn("Failed to send notification to {}: {}", uri, e.getMessage(), e);
         }
     }
 }
