@@ -10,3 +10,17 @@ services:
       - "8180:8180"
     volumes:
       - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
+
+  accounts-db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: accounts_db
+      POSTGRES_USER: accounts
+      POSTGRES_PASSWORD: accounts_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - accounts-data:/var/lib/postgresql/data
+
+volumes:
+  accounts-data:

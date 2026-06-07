@@ -23,8 +23,18 @@
 	<modules>
 		<module>config-server</module>
 		<module>gateway</module>
+		<module>accounts-service</module>
+		<module>notifications-service</module>
 		<module>front-app</module>
 	</modules>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
 
 	<dependencyManagement>
 		<dependencies>

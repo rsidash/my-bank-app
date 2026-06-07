@@ -13,6 +13,26 @@
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
       "protocol": "openid-connect"
+    },
+    {
+      "clientId": "accounts-service",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "accounts-service-secret",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "protocol": "openid-connect",
+      "defaultClientScopes": ["notifications"]
+    }
+  ],
+  "clientScopes": [
+    {
+      "name": "notifications",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true"
+      }
     }
   ],
   "users": [
@@ -34,6 +54,19 @@
       "enabled": true,
       "firstName": "Петр",
       "lastName": "Петров",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "sidorov",
+      "enabled": true,
+      "firstName": "Сидор",
+      "lastName": "Сидоров",
       "credentials": [
         {
           "type": "password",
