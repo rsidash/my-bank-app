@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import ru.yandex.practicum.mybankfront.controller.dto.AccountDto;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,15 @@ public class AccountsClient {
         return restClient.get()
                 .uri("/{login}", login)
                 .header("Authorization", "Bearer " + token)
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {});
+    }
+
+    public Map<String, Object> updateAccount(String login, String name, LocalDate birthdate, String token) {
+        return restClient.post()
+                .uri("/{login}", login)
+                .header("Authorization", "Bearer " + token)
+                .body(Map.of("name", name, "birthdate", birthdate.toString()))
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {});
     }
