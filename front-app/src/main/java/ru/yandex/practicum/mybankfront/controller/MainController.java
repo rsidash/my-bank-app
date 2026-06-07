@@ -5,9 +5,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestClientResponseException;
+import ru.yandex.practicum.mybankfront.client.AccountsClient;
+import ru.yandex.practicum.mybankfront.controller.dto.AccountDto;
 import ru.yandex.practicum.mybankfront.controller.dto.CashAction;
+import ru.yandex.practicum.mybankfront.service.SecurityService;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Контроллер main.html.
@@ -33,6 +39,14 @@ import java.time.LocalDate;
 @Controller
 public class MainController {
 
+    private final SecurityService securityService;
+    private final AccountsClient accountsClient;
+
+    public MainController(SecurityService securityService, AccountsClient accountsClient) {
+        this.securityService = securityService;
+        this.accountsClient = accountsClient;
+    }
+
     /**
      * GET /.
      * Редирект на GET /account
@@ -44,16 +58,32 @@ public class MainController {
 
     /**
      * GET /account.
-     * Что нужно сделать:
      * 1. Сходить в сервис accounts через Gateway API для получения данных аккаунта по REST
      * 2. Заполнить модель main.html полученными из ответа данными
      * 3. Текущего пользователя можно получить из контекста Security
      */
     @GetMapping("/account")
     public String getAccount(Model model) {
-        // TODO: Заменить на то, что описано в комментарии к методу
-        // accountStub.fillModel(model, null, null);
+        String login = securityService.getCurrentUserLogin();
+        String token = securityService.getAccessToken();
+        try {
+            Map<String, Object> account = accountsClient.getAccount(login, token);
+            List<AccountDto> accounts = accountsClient.getOtherAccounts(login, token);
 
+            model.addAttribute("name", account.get("name"));
+            model.addAttribute("birthdate", account.get("birthdate"));
+            model.addAttribute("sum", account.get("sum"));
+            model.addAttribute("accounts", accounts);
+            model.addAttribute("errors", null);
+            model.addAttribute("info", null);
+        } catch (RestClientResponseException e) {
+            model.addAttribute("name", "");
+            model.addAttribute("birthdate", "");
+            model.addAttribute("sum", 0);
+            model.addAttribute("accounts", List.of());
+            model.addAttribute("errors", List.of(e.getResponseBodyAsString()));
+            model.addAttribute("info", null);
+        }
         return "main";
     }
 
@@ -75,8 +105,6 @@ public class MainController {
             @RequestParam("birthdate") LocalDate birthdate
     ) {
         // TODO: Заменить на то, что описано в комментарии к методу
-        // accountStub.setNameAndBirthdate(name, birthdate);
-        // accountStub.fillModel(model, null, null);
 
         return "main";
     }
@@ -99,7 +127,6 @@ public class MainController {
             @RequestParam("action") CashAction action
             ) {
         // TODO: Заменить на то, что описано в комментарии к методу
-        // accountStub.editCash(model, value, action);
 
         return "main";
     }
@@ -122,7 +149,6 @@ public class MainController {
             @RequestParam("login") String login
     ) {
         // TODO: Заменить на то, что описано в комментарии к методу
-        // accountStub.transfer(model, value, login);
 
         return "main";
     }
