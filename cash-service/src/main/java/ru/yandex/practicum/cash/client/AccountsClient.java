@@ -1,10 +1,10 @@
 package ru.yandex.practicum.cash.client;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import ru.yandex.practicum.cash.config.GatewayProperties;
 import ru.yandex.practicum.cash.config.OAuth2TokenService;
 
 import java.util.Map;
@@ -16,10 +16,10 @@ public class AccountsClient {
     private final RestClient restClient;
     private final OAuth2TokenService tokenService;
 
-    public AccountsClient(@Value("${gateway.url}") String gatewayUrl,
+    public AccountsClient(GatewayProperties gatewayProperties,
                           RestClient.Builder builder,
                           OAuth2TokenService tokenService) {
-        this.restClient = builder.baseUrl(gatewayUrl + "/api/accounts").build();
+        this.restClient = builder.baseUrl(gatewayProperties.getUrl() + "/api/accounts").build();
         this.tokenService = tokenService;
     }
 

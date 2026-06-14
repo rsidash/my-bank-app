@@ -1,9 +1,9 @@
 package ru.yandex.practicum.cash.client;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import ru.yandex.practicum.cash.config.GatewayProperties;
 import ru.yandex.practicum.cash.config.OAuth2TokenService;
 
 import java.util.Map;
@@ -15,10 +15,10 @@ public class NotificationsClient {
     private final RestClient restClient;
     private final OAuth2TokenService tokenService;
 
-    public NotificationsClient(@Value("${gateway.url}") String gatewayUrl,
+    public NotificationsClient(GatewayProperties gatewayProperties,
                                RestClient.Builder builder,
                                OAuth2TokenService tokenService) {
-        this.restClient = builder.baseUrl(gatewayUrl + "/api/notifications").build();
+        this.restClient = builder.baseUrl(gatewayProperties.getUrl() + "/api/notifications").build();
         this.tokenService = tokenService;
     }
 
