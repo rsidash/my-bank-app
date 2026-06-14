@@ -1,0 +1,108 @@
+{
+  "realm": "my-bank",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "my-bank-front",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "${KEYCLOAK_CLIENT_SECRET}",
+      "redirectUris": ["http://localhost:8080/*"],
+      "webOrigins": ["http://localhost:8080"],
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "protocol": "openid-connect"
+    },
+    {
+      "clientId": "accounts-service",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "${ACCOUNTS_CLIENT_SECRET}",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "protocol": "openid-connect",
+      "defaultClientScopes": ["notifications"]
+    },
+    {
+      "clientId": "cash-service",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "${CASH_CLIENT_SECRET}",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "protocol": "openid-connect",
+      "defaultClientScopes": ["accounts", "notifications"]
+    },
+    {
+      "clientId": "transfer-service",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "${TRANSFER_CLIENT_SECRET}",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "protocol": "openid-connect",
+      "defaultClientScopes": ["accounts", "notifications"]
+    }
+  ],
+  "clientScopes": [
+    {
+      "name": "notifications",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true"
+      }
+    },
+    {
+      "name": "accounts",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true"
+      }
+    }
+  ],
+  "users": [
+    {
+      "username": "ivanov",
+      "enabled": true,
+      "firstName": "Иван",
+      "lastName": "Иванов",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${KEYCLOAK_USER_PASSWORD}",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "petrov",
+      "enabled": true,
+      "firstName": "Петр",
+      "lastName": "Петров",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${KEYCLOAK_USER_PASSWORD}",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "sidorov",
+      "enabled": true,
+      "firstName": "Сидор",
+      "lastName": "Сидоров",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${KEYCLOAK_USER_PASSWORD}",
+          "temporary": false
+        }
+      ]
+    }
+  ]
+}

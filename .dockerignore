@@ -1,0 +1,9 @@
+**/src
+**/pom.xml
+**/.mvn
+**/mvnw
+**/mvnw.cmd
+**/.gitignore
+**/.env
+**/HELP.md
+**/target/*.original
