@@ -3,7 +3,7 @@ package ru.yandex.practicum.mybankfront.client;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import ru.yandex.practicum.mybankfront.config.GatewayProperties;
+import ru.yandex.practicum.mybankfront.config.TransferServiceProperties;
 
 import java.util.Map;
 
@@ -12,8 +12,8 @@ public class TransferClient {
 
     private final RestClient restClient;
 
-    public TransferClient(GatewayProperties gatewayProperties, RestClient.Builder builder) {
-        this.restClient = builder.baseUrl(gatewayProperties.getUrl() + "/api/transfer").build();
+    public TransferClient(TransferServiceProperties properties, RestClient.Builder builder) {
+        this.restClient = builder.baseUrl(properties.getUrl()).build();
     }
 
     public Map<String, Object> transfer(String fromLogin, String toLogin, int value, String token) {

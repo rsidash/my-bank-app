@@ -1,4 +1,4 @@
-package ru.yandex.practicum.transfer.config;
+package ru.yandex.practicum.mybankfront.config;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "gateway")
-public class GatewayProperties {
+@ConfigurationProperties(prefix = "accounts.service")
+public class AccountsServiceProperties {
     private String url;
 }

@@ -1,11 +1,11 @@
 package ru.yandex.practicum.accounts.client;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.client.*;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import ru.yandex.practicum.accounts.config.NotificationsServiceProperties;
 
 import java.util.Map;
 
@@ -17,11 +17,11 @@ public class NotificationsClient {
     private final OAuth2AuthorizedClientManager clientManager;
 
     public NotificationsClient(
-            @Value("${gateway.url}") String gatewayUrl,
+            NotificationsServiceProperties properties,
             RestClient.Builder builder,
             OAuth2AuthorizedClientService authorizedClientService,
             ClientRegistrationRepository clientRegistrationRepository) {
-        this.restClient = builder.baseUrl(gatewayUrl + "/api/notifications").build();
+        this.restClient = builder.baseUrl(properties.getUrl()).build();
         var manager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(
                 clientRegistrationRepository, authorizedClientService);
         manager.setAuthorizedClientProvider(

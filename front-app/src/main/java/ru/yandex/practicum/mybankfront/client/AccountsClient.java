@@ -3,7 +3,7 @@ package ru.yandex.practicum.mybankfront.client;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import ru.yandex.practicum.mybankfront.config.GatewayProperties;
+import ru.yandex.practicum.mybankfront.config.AccountsServiceProperties;
 import ru.yandex.practicum.mybankfront.controller.dto.AccountDto;
 
 import java.time.LocalDate;
@@ -15,8 +15,8 @@ public class AccountsClient {
 
     private final RestClient restClient;
 
-    public AccountsClient(GatewayProperties gatewayProperties, RestClient.Builder builder) {
-        this.restClient = builder.baseUrl(gatewayProperties.getUrl() + "/api/accounts").build();
+    public AccountsClient(AccountsServiceProperties properties, RestClient.Builder builder) {
+        this.restClient = builder.baseUrl(properties.getUrl()).build();
     }
 
     public Map<String, Object> getAccount(String login, String token) {
