@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-transfer-service
+  labels:
+    app: transfer-service
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: transfer-service
+  template:
+    metadata:
+      labels:
+        app: transfer-service
+    spec:
+      containers:
+        - name: transfer-service
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8084
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-transfer-service-config
+            - secretRef:
+                name: {{ .Release.Name }}-transfer-service-secret
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8084
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8084
+            initialDelaySeconds: 60
+            periodSeconds: 30

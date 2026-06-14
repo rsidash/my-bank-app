@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-transfer-service-config
+data:
+  SPRING_PROFILES_ACTIVE: kubernetes
+  SPRING_APPLICATION_NAME: transfer-service
+  SERVER_PORT: "8084"
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: "http://{{ .Release.Name }}-keycloak:{{ .Values.global.keycloak.port }}/realms/{{ .Values.global.keycloak.realm }}"
+  SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_ACCOUNTS_CLIENT_ID: transfer-service
+  SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_ACCOUNTS_AUTHORIZATION_GRANT_TYPE: client_credentials
+  SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_ACCOUNTS_SCOPE: accounts
+  SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_ACCOUNTS_ISSUER_URI: "http://{{ .Release.Name }}-keycloak:{{ .Values.global.keycloak.port }}/realms/{{ .Values.global.keycloak.realm }}"
+  SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NOTIFICATIONS_CLIENT_ID: transfer-service
+  SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NOTIFICATIONS_AUTHORIZATION_GRANT_TYPE: client_credentials
+  SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NOTIFICATIONS_SCOPE: notifications
+  SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_NOTIFICATIONS_ISSUER_URI: "http://{{ .Release.Name }}-keycloak:{{ .Values.global.keycloak.port }}/realms/{{ .Values.global.keycloak.realm }}"
+  ACCOUNTS_SERVICE_URL: "http://{{ .Release.Name }}-accounts-service:8081"
+  NOTIFICATIONS_SERVICE_URL: "http://{{ .Release.Name }}-notifications-service:8083"

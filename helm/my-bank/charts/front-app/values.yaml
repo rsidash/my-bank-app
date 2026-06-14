@@ -1,0 +1,5 @@
+replicaCount: 1
+image:
+  repository: my-bank/front-app
+  tag: latest
+  pullPolicy: IfNotPresent

@@ -1,0 +1,64 @@
+global:
+  imagePullSecrets: []
+  keycloak:
+    port: 8180
+    realm: my-bank
+    externalUrl: http://localhost:30180
+  secrets:
+    accountsDbPassword: accounts_password
+    frontAppClientSecret: my-bank-front-secret
+    accountsClientSecret: accounts-service-secret
+    cashClientSecret: cash-service-secret
+    transferClientSecret: transfer-service-secret
+  ingress:
+    enabled: true
+    className: nginx
+    host: my-bank.local
+
+# --- Subcharts ---
+
+accounts-db:
+  storage: 1Gi
+
+keycloak:
+  adminPassword: admin
+  userPassword: password
+
+accounts-service:
+  replicaCount: 1
+  image:
+    repository: my-bank/accounts-service
+    tag: latest
+    pullPolicy: IfNotPresent
+  db:
+    port: 5432
+    name: accounts_db
+    username: accounts
+
+cash-service:
+  replicaCount: 1
+  image:
+    repository: my-bank/cash-service
+    tag: latest
+    pullPolicy: IfNotPresent
+
+transfer-service:
+  replicaCount: 1
+  image:
+    repository: my-bank/transfer-service
+    tag: latest
+    pullPolicy: IfNotPresent
+
+notifications-service:
+  replicaCount: 1
+  image:
+    repository: my-bank/notifications-service
+    tag: latest
+    pullPolicy: IfNotPresent
+
+front-app:
+  replicaCount: 1
+  image:
+    repository: my-bank/front-app
+    tag: latest
+    pullPolicy: IfNotPresent
