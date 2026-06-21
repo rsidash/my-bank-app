@@ -1,0 +1,6 @@
+replicaCount: 1
+image:
+  repository: apache/kafka
+  tag: "3.7.0"
+  pullPolicy: IfNotPresent
+storage: 1Gi

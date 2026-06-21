@@ -17,6 +17,9 @@ global:
 
 # --- Subcharts ---
 
+kafka:
+  storage: 1Gi
+
 accounts-db:
   storage: 1Gi
 
