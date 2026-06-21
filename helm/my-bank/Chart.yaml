@@ -1,0 +1,29 @@
+apiVersion: v2
+name: my-bank
+description: My Bank - Microservices application deployed on Kubernetes
+type: application
+version: 0.1.0
+appVersion: "0.0.1"
+
+dependencies:
+  - name: accounts-db
+    version: "0.1.0"
+    repository: "file://charts/accounts-db"
+  - name: keycloak
+    version: "0.1.0"
+    repository: "file://charts/keycloak"
+  - name: accounts-service
+    version: "0.1.0"
+    repository: "file://charts/accounts-service"
+  - name: cash-service
+    version: "0.1.0"
+    repository: "file://charts/cash-service"
+  - name: transfer-service
+    version: "0.1.0"
+    repository: "file://charts/transfer-service"
+  - name: notifications-service
+    version: "0.1.0"
+    repository: "file://charts/notifications-service"
+  - name: front-app
+    version: "0.1.0"
+    repository: "file://charts/front-app"

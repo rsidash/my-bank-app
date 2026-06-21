@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import ru.yandex.practicum.transfer.config.GatewayProperties;
+import ru.yandex.practicum.transfer.config.AccountsServiceProperties;
 import ru.yandex.practicum.transfer.config.OAuth2TokenService;
 
 import java.util.Map;
@@ -16,10 +16,10 @@ public class AccountsClient {
     private final RestClient restClient;
     private final OAuth2TokenService tokenService;
 
-    public AccountsClient(GatewayProperties gatewayProperties,
+    public AccountsClient(AccountsServiceProperties properties,
                           RestClient.Builder builder,
                           OAuth2TokenService tokenService) {
-        this.restClient = builder.baseUrl(gatewayProperties.getUrl() + "/api/accounts").build();
+        this.restClient = builder.baseUrl(properties.getUrl()).build();
         this.tokenService = tokenService;
     }
 

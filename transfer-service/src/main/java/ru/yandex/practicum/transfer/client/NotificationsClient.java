@@ -3,7 +3,7 @@ package ru.yandex.practicum.transfer.client;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import ru.yandex.practicum.transfer.config.GatewayProperties;
+import ru.yandex.practicum.transfer.config.NotificationsServiceProperties;
 import ru.yandex.practicum.transfer.config.OAuth2TokenService;
 
 import java.util.Map;
@@ -15,10 +15,10 @@ public class NotificationsClient {
     private final RestClient restClient;
     private final OAuth2TokenService tokenService;
 
-    public NotificationsClient(GatewayProperties gatewayProperties,
+    public NotificationsClient(NotificationsServiceProperties properties,
                                RestClient.Builder builder,
                                OAuth2TokenService tokenService) {
-        this.restClient = builder.baseUrl(gatewayProperties.getUrl() + "/api/notifications").build();
+        this.restClient = builder.baseUrl(properties.getUrl()).build();
         this.tokenService = tokenService;
     }
 

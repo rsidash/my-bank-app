@@ -1,0 +1,10 @@
+replicaCount: 1
+image:
+  repository: my-bank/accounts-service
+  tag: latest
+  pullPolicy: IfNotPresent
+db:
+  host: accounts-db
+  port: 5432
+  name: accounts_db
+  username: accounts

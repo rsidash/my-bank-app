@@ -1,0 +1,5 @@
+replicaCount: 1
+image:
+  repository: my-bank/transfer-service
+  tag: latest
+  pullPolicy: IfNotPresent

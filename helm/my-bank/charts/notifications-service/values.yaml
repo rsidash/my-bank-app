@@ -1,0 +1,5 @@
+replicaCount: 1
+image:
+  repository: my-bank/notifications-service
+  tag: latest
+  pullPolicy: IfNotPresent

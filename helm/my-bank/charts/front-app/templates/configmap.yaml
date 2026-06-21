@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-front-app-config
+data:
+  SPRING_PROFILES_ACTIVE: kubernetes
+  SPRING_APPLICATION_NAME: my-bank-front-app
+  SERVER_PORT: "8080"
+  ACCOUNTS_SERVICE_URL: "http://{{ .Release.Name }}-accounts-service:8081"
+  CASH_SERVICE_URL: "http://{{ .Release.Name }}-cash-service:8082"
+  TRANSFER_SERVICE_URL: "http://{{ .Release.Name }}-transfer-service:8084"
+  SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_ID: my-bank-front
+  SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_SCOPE: openid,profile
+  SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_AUTHORIZATION_GRANT_TYPE: authorization_code
+  SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_REDIRECT_URI: "{baseUrl}/login/oauth2/code/{registrationId}"
+  SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: "{{ .Values.global.keycloak.externalUrl }}/realms/{{ .Values.global.keycloak.realm }}"

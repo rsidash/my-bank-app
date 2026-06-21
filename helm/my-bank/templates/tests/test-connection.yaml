@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ .Release.Name }}-test-connection"
+  labels:
+    app: my-bank-test
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: test-services
+      image: busybox:1.36
+      command: ['sh', '-c']
+      args:
+        - |
+          echo "Testing accounts-service..."
+          wget -qO- --timeout=10 http://{{ .Release.Name }}-accounts-service:8081/actuator/health || exit 1
+          echo "Testing cash-service..."
+          wget -qO- --timeout=10 http://{{ .Release.Name }}-cash-service:8082/actuator/health || exit 1
+          echo "Testing transfer-service..."
+          wget -qO- --timeout=10 http://{{ .Release.Name }}-transfer-service:8084/actuator/health || exit 1
+          echo "Testing notifications-service..."
+          wget -qO- --timeout=10 http://{{ .Release.Name }}-notifications-service:8083/actuator/health || exit 1
+          echo "Testing front-app..."
+          wget -qO- --timeout=10 http://{{ .Release.Name }}-front-app:8080/actuator/health || exit 1
+          echo "Testing keycloak..."
+          wget -qO- --timeout=10 http://{{ .Release.Name }}-keycloak:8180/health || exit 1
+          echo "All services are healthy!"
+  restartPolicy: Never
