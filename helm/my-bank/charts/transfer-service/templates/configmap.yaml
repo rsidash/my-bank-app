@@ -11,9 +11,7 @@ data:
   SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_ACCOUNTS_AUTHORIZATION_GRANT_TYPE: client_credentials
   SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_ACCOUNTS_SCOPE: accounts
   SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_ACCOUNTS_ISSUER_URI: "http://{{ .Release.Name }}-keycloak:{{ .Values.global.keycloak.port }}/realms/{{ .Values.global.keycloak.realm }}"
-  SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NOTIFICATIONS_CLIENT_ID: transfer-service
-  SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NOTIFICATIONS_AUTHORIZATION_GRANT_TYPE: client_credentials
-  SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NOTIFICATIONS_SCOPE: notifications
-  SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_NOTIFICATIONS_ISSUER_URI: "http://{{ .Release.Name }}-keycloak:{{ .Values.global.keycloak.port }}/realms/{{ .Values.global.keycloak.realm }}"
   ACCOUNTS_SERVICE_URL: "http://{{ .Release.Name }}-accounts-service:8081"
-  NOTIFICATIONS_SERVICE_URL: "http://{{ .Release.Name }}-notifications-service:8083"
+  SPRING_KAFKA_BOOTSTRAP_SERVERS: "{{ .Release.Name }}-kafka:9092"
+  SPRING_KAFKA_PRODUCER_KEY_SERIALIZER: org.apache.kafka.common.serialization.StringSerializer
+  SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER: org.springframework.kafka.support.serializer.JsonSerializer

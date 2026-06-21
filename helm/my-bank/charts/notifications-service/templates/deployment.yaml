@@ -18,20 +18,16 @@ spec:
         - name: notifications-service
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - containerPort: 8083
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-notifications-service-config
           readinessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 8083
+            exec:
+              command: ["sh", "-c", "ps aux | grep java | grep -v grep"]
             initialDelaySeconds: 30
             periodSeconds: 10
           livenessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 8083
+            exec:
+              command: ["sh", "-c", "ps aux | grep java | grep -v grep"]
             initialDelaySeconds: 60
             periodSeconds: 30
