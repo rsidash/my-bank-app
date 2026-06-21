@@ -1,46 +1,34 @@
 package ru.yandex.practicum.cash.client;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
-import ru.yandex.practicum.cash.config.NotificationsServiceProperties;
-import ru.yandex.practicum.cash.config.OAuth2TokenService;
 
 import java.util.Map;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class NotificationsClient {
 
-    private final RestClient restClient;
-    private final OAuth2TokenService tokenService;
-
-    public NotificationsClient(NotificationsServiceProperties properties,
-                               RestClient.Builder builder,
-                               OAuth2TokenService tokenService) {
-        this.restClient = builder.baseUrl(properties.getUrl()).build();
-        this.tokenService = tokenService;
-    }
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void notifyCashDeposit(String login, int value) {
-        sendNotification("/cash-deposit", Map.of("login", login, "value", value));
+        try {
+            kafkaTemplate.send("notifications.cash-deposit",
+                    login, Map.of("login", login, "value", value));
+        } catch (Exception e) {
+            log.warn("Failed to send cash deposit notification: {}", e.getMessage(), e);
+        }
     }
 
     public void notifyCashWithdraw(String login, int value) {
-        sendNotification("/cash-withdraw", Map.of("login", login, "value", value));
-    }
-
-    private void sendNotification(String uri, Map<String, Object> body) {
         try {
-            String token = tokenService.getToken("notifications");
-            restClient.post()
-                    .uri(uri)
-                    .header("Authorization", "Bearer " + token)
-                    .body(body)
-                    .retrieve()
-                    .toBodilessEntity();
+            kafkaTemplate.send("notifications.cash-withdraw",
+                    login, Map.of("login", login, "value", value));
         } catch (Exception e) {
-            log.warn("Failed to send notification to {}: {}", uri, e.getMessage(), e);
+            log.warn("Failed to send cash withdraw notification: {}", e.getMessage(), e);
         }
     }
 }
