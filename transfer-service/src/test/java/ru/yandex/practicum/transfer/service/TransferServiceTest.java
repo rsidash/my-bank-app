@@ -27,7 +27,7 @@ class TransferServiceTest {
     private TransferService transferService;
 
     @Test
-    void transfer_callsAccountsAndNotifications() {
+    void transfer_callsAccountsAndSendsKafkaNotification() {
         Map<String, Object> expected = Map.of("login", "ivanov", "sum", 50);
         when(accountsClient.transfer("ivanov", "petrov", 50)).thenReturn(expected);
 

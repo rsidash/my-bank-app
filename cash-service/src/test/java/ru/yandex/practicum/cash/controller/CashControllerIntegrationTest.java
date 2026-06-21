@@ -7,10 +7,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.cash.client.AccountsClient;
-import ru.yandex.practicum.cash.client.NotificationsClient;
 import ru.yandex.practicum.cash.config.TestSecurityConfig;
 
 import java.util.Map;
@@ -33,7 +33,7 @@ class CashControllerIntegrationTest {
     private AccountsClient accountsClient;
 
     @MockBean
-    private NotificationsClient notificationsClient;
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
     @Test
     @WithMockUser

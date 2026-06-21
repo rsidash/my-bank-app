@@ -28,7 +28,7 @@ public class TestSecurityConfig {
 
     @Bean
     public ClientRegistrationRepository clientRegistrationRepository() {
-        ClientRegistration registration = ClientRegistration.withRegistrationId("test")
+        ClientRegistration registration = ClientRegistration.withRegistrationId("accounts")
                 .clientId("test-client")
                 .clientSecret("test-secret")
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)

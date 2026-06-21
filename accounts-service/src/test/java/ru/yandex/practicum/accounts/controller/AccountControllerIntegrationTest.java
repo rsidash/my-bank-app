@@ -8,9 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.yandex.practicum.accounts.client.NotificationsClient;
 import ru.yandex.practicum.accounts.config.TestSecurityConfig;
 import ru.yandex.practicum.accounts.model.Account;
 import ru.yandex.practicum.accounts.repository.AccountRepository;
@@ -37,7 +37,7 @@ class AccountControllerIntegrationTest {
     private AccountRepository accountRepository;
 
     @MockBean
-    private NotificationsClient notificationsClient;
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
     @BeforeEach
     void setUp() {
