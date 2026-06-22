@@ -15,11 +15,13 @@ public class NotificationsClient {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void notifyTransfer(String fromLogin, String toLogin, int value) {
-        try {
-            kafkaTemplate.send("notifications.transfer",
-                    fromLogin, Map.of("fromLogin", fromLogin, "toLogin", toLogin, "value", value));
-        } catch (Exception e) {
-            log.warn("Failed to send transfer notification: {}", e.getMessage(), e);
+        var future = kafkaTemplate.send("notifications.transfer", fromLogin, Map.of("fromLogin", fromLogin, "toLogin", toLogin, "value", value));
+        if (future != null) {
+            future.whenComplete((result, ex) -> {
+                if (ex != null) {
+                    log.warn("Failed to send transfer notification for '{}': {}", fromLogin, ex.getMessage(), ex);
+                }
+            });
         }
     }
 }

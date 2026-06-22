@@ -15,20 +15,24 @@ public class NotificationsClient {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void notifyCashDeposit(String login, int value) {
-        try {
-            kafkaTemplate.send("notifications.cash-deposit",
-                    login, Map.of("login", login, "value", value));
-        } catch (Exception e) {
-            log.warn("Failed to send cash deposit notification: {}", e.getMessage(), e);
+        var future = kafkaTemplate.send("notifications.cash-deposit", login, Map.of("login", login, "value", value));
+        if (future != null) {
+            future.whenComplete((result, ex) -> {
+                if (ex != null) {
+                    log.warn("Failed to send cash deposit notification for '{}': {}", login, ex.getMessage(), ex);
+                }
+            });
         }
     }
 
     public void notifyCashWithdraw(String login, int value) {
-        try {
-            kafkaTemplate.send("notifications.cash-withdraw",
-                    login, Map.of("login", login, "value", value));
-        } catch (Exception e) {
-            log.warn("Failed to send cash withdraw notification: {}", e.getMessage(), e);
+        var future = kafkaTemplate.send("notifications.cash-withdraw", login, Map.of("login", login, "value", value));
+        if (future != null) {
+            future.whenComplete((result, ex) -> {
+                if (ex != null) {
+                    log.warn("Failed to send cash withdraw notification for '{}': {}", login, ex.getMessage(), ex);
+                }
+            });
         }
     }
 }

@@ -15,11 +15,13 @@ public class NotificationsClient {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void notifyAccountUpdated(String login, String name) {
-        try {
-            kafkaTemplate.send("notifications.account-updated",
-                    login, Map.of("login", login, "name", name));
-        } catch (Exception e) {
-            log.warn("Failed to send account update notification: {}", e.getMessage(), e);
+        var future = kafkaTemplate.send("notifications.account-updated", login, Map.of("login", login, "name", name));
+        if (future != null) {
+            future.whenComplete((result, ex) -> {
+                if (ex != null) {
+                    log.warn("Failed to send account update notification for '{}': {}", login, ex.getMessage(), ex);
+                }
+            });
         }
     }
 }
