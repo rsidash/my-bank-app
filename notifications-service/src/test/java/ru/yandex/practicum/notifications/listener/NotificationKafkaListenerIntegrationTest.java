@@ -7,9 +7,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
+import ru.yandex.practicum.notifications.event.AccountUpdatedEvent;
+import ru.yandex.practicum.notifications.event.CashDepositEvent;
+import ru.yandex.practicum.notifications.event.CashWithdrawEvent;
+import ru.yandex.practicum.notifications.event.TransferEvent;
 import ru.yandex.practicum.notifications.service.NotificationService;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
@@ -33,8 +36,7 @@ class NotificationKafkaListenerIntegrationTest {
 
     @Test
     void onAccountUpdated_consumesMessage() {
-        kafkaTemplate.send("notifications.account-updated", "ivanov",
-                Map.of("login", "ivanov", "name", "Новое Имя"));
+        kafkaTemplate.send("notifications.account-updated", "ivanov", new AccountUpdatedEvent("ivanov", "Новое Имя"));
 
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() ->
                 verify(notificationService).send("ivanov", "Данные аккаунта обновлены. Новое имя: Новое Имя"));
@@ -42,8 +44,7 @@ class NotificationKafkaListenerIntegrationTest {
 
     @Test
     void onTransfer_consumesMessage() {
-        kafkaTemplate.send("notifications.transfer", "ivanov",
-                Map.of("fromLogin", "ivanov", "toLogin", "petrov", "value", 50));
+        kafkaTemplate.send("notifications.transfer", "ivanov", new TransferEvent("ivanov", "petrov", 50));
 
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             verify(notificationService).send("ivanov", "Перевод 50 руб. пользователю 'petrov'");
@@ -53,8 +54,7 @@ class NotificationKafkaListenerIntegrationTest {
 
     @Test
     void onCashDeposit_consumesMessage() {
-        kafkaTemplate.send("notifications.cash-deposit", "ivanov",
-                Map.of("login", "ivanov", "value", 100));
+        kafkaTemplate.send("notifications.cash-deposit", "ivanov", new CashDepositEvent("ivanov", 100));
 
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() ->
                 verify(notificationService).send("ivanov", "Пополнение счёта на 100 руб."));
@@ -62,8 +62,7 @@ class NotificationKafkaListenerIntegrationTest {
 
     @Test
     void onCashWithdraw_consumesMessage() {
-        kafkaTemplate.send("notifications.cash-withdraw", "ivanov",
-                Map.of("login", "ivanov", "value", 50));
+        kafkaTemplate.send("notifications.cash-withdraw", "ivanov", new CashWithdrawEvent("ivanov", 50));
 
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() ->
                 verify(notificationService).send("ivanov", "Снятие со счёта 50 руб."));
