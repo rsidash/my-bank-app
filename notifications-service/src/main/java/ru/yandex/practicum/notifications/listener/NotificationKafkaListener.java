@@ -18,22 +18,21 @@ public class NotificationKafkaListener {
 
     @KafkaListener(topics = KafkaTopics.ACCOUNT_UPDATED, groupId = "notifications-group")
     public void onAccountUpdated(AccountUpdatedEvent event) {
-        notificationService.send(event.login(), "Данные аккаунта обновлены. Новое имя: " + event.name());
+        notificationService.handleAccountUpdated(event);
     }
 
     @KafkaListener(topics = KafkaTopics.TRANSFER, groupId = "notifications-group")
     public void onTransfer(TransferEvent event) {
-        notificationService.send(event.fromLogin(), "Перевод %d руб. пользователю '%s'".formatted(event.value(), event.toLogin()));
-        notificationService.send(event.toLogin(), "Получен перевод %d руб. от пользователя '%s'".formatted(event.value(), event.fromLogin()));
+        notificationService.handleTransfer(event);
     }
 
     @KafkaListener(topics = KafkaTopics.CASH_DEPOSIT, groupId = "notifications-group")
     public void onCashDeposit(CashDepositEvent event) {
-        notificationService.send(event.login(), "Пополнение счёта на %d руб.".formatted(event.value()));
+        notificationService.handleCashDeposit(event);
     }
 
     @KafkaListener(topics = KafkaTopics.CASH_WITHDRAW, groupId = "notifications-group")
     public void onCashWithdraw(CashWithdrawEvent event) {
-        notificationService.send(event.login(), "Снятие со счёта %d руб.".formatted(event.value()));
+        notificationService.handleCashWithdraw(event);
     }
 }

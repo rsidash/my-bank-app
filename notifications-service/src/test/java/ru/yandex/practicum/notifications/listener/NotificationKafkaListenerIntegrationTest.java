@@ -36,35 +36,37 @@ class NotificationKafkaListenerIntegrationTest {
 
     @Test
     void onAccountUpdated_consumesMessage() {
-        kafkaTemplate.send("notifications.account-updated", "ivanov", new AccountUpdatedEvent("ivanov", "Новое Имя"));
+        var event = new AccountUpdatedEvent("ivanov", "Новое Имя");
+        kafkaTemplate.send("notifications.account-updated", "ivanov", event);
 
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() ->
-                verify(notificationService).send("ivanov", "Данные аккаунта обновлены. Новое имя: Новое Имя"));
+                verify(notificationService).handleAccountUpdated(event));
     }
 
     @Test
     void onTransfer_consumesMessage() {
-        kafkaTemplate.send("notifications.transfer", "ivanov", new TransferEvent("ivanov", "petrov", 50));
+        var event = new TransferEvent("ivanov", "petrov", 50);
+        kafkaTemplate.send("notifications.transfer", "ivanov", event);
 
-        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-            verify(notificationService).send("ivanov", "Перевод 50 руб. пользователю 'petrov'");
-            verify(notificationService).send("petrov", "Получен перевод 50 руб. от пользователя 'ivanov'");
-        });
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() ->
+                verify(notificationService).handleTransfer(event));
     }
 
     @Test
     void onCashDeposit_consumesMessage() {
-        kafkaTemplate.send("notifications.cash-deposit", "ivanov", new CashDepositEvent("ivanov", 100));
+        var event = new CashDepositEvent("ivanov", 100);
+        kafkaTemplate.send("notifications.cash-deposit", "ivanov", event);
 
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() ->
-                verify(notificationService).send("ivanov", "Пополнение счёта на 100 руб."));
+                verify(notificationService).handleCashDeposit(event));
     }
 
     @Test
     void onCashWithdraw_consumesMessage() {
-        kafkaTemplate.send("notifications.cash-withdraw", "ivanov", new CashWithdrawEvent("ivanov", 50));
+        var event = new CashWithdrawEvent("ivanov", 50);
+        kafkaTemplate.send("notifications.cash-withdraw", "ivanov", event);
 
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() ->
-                verify(notificationService).send("ivanov", "Снятие со счёта 50 руб."));
+                verify(notificationService).handleCashWithdraw(event));
     }
 }
