@@ -1,38 +1,25 @@
 package ru.yandex.practicum.transfer.client;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
-import ru.yandex.practicum.transfer.config.NotificationsServiceProperties;
-import ru.yandex.practicum.transfer.config.OAuth2TokenService;
-
-import java.util.Map;
+import ru.yandex.practicum.transfer.event.KafkaTopics;
+import ru.yandex.practicum.transfer.event.TransferEvent;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class NotificationsClient {
 
-    private final RestClient restClient;
-    private final OAuth2TokenService tokenService;
-
-    public NotificationsClient(NotificationsServiceProperties properties,
-                               RestClient.Builder builder,
-                               OAuth2TokenService tokenService) {
-        this.restClient = builder.baseUrl(properties.getUrl()).build();
-        this.tokenService = tokenService;
-    }
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void notifyTransfer(String fromLogin, String toLogin, int value) {
-        try {
-            String token = tokenService.getToken("notifications");
-            restClient.post()
-                    .uri("/transfer")
-                    .header("Authorization", "Bearer " + token)
-                    .body(Map.of("fromLogin", fromLogin, "toLogin", toLogin, "value", value))
-                    .retrieve()
-                    .toBodilessEntity();
-        } catch (Exception e) {
-            log.warn("Failed to send transfer notification: {}", e.getMessage(), e);
-        }
+        kafkaTemplate.send(KafkaTopics.TRANSFER, fromLogin, new TransferEvent(fromLogin, toLogin, value))
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        log.warn("Failed to send transfer notification for '{}': {}", fromLogin, ex.getMessage(), ex);
+                    }
+                });
     }
 }

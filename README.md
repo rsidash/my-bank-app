@@ -1,12 +1,13 @@
 # My Bank — Микросервисное приложение
 
-Банковское приложение, построенное на микросервисной архитектуре с использованием Spring Boot и OAuth 2.0.
+Банковское приложение, построенное на микросервисной архитектуре с использованием Spring Boot, OAuth 2.0 и Apache Kafka.
 Поддерживает развёртывание в Docker Compose (dev) и Kubernetes (prod) через Helm.
 
 ## Архитектура
 
 ### Kubernetes (prod)
 В Kubernetes Spring Cloud Gateway заменён на **Ingress**, а Eureka и Config Server — на нативный **Kubernetes Service Discovery** и **ConfigMaps/Secrets**.
+Взаимодействие с Notifications Service осуществляется через **Apache Kafka**.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -18,14 +19,20 @@
 │  │         │───>│accounts-svc  │   └─────────────────┘ │
 │  │         │───>│cash-svc      │                        │
 │  │         │───>│transfer-svc  │   ┌─────────────────┐ │
-│  │         │───>│notif-svc     │   │ accounts-db     │ │
-│  └─────────┘    └──────────────┘   │ (PostgreSQL)    │ │
-│                                     └─────────────────┘ │
+│  └─────────┘    └──────────────┘   │ accounts-db     │ │
+│                                     │ (PostgreSQL)    │ │
+│  ┌──────────┐   ┌──────────────┐   └─────────────────┘ │
+│  │  Kafka   │<──│accounts-svc  │                        │
+│  │ (KRaft)  │<──│cash-svc      │                        │
+│  │          │<──│transfer-svc  │                        │
+│  │          │──>│notif-svc     │                        │
+│  └──────────┘   └──────────────┘                        │
 └─────────────────────────────────────────────────────────┘
 ```
 
 ### Docker Compose (dev)
 Сохранена совместимость: Eureka + Config Server + Spring Cloud Gateway работают как раньше.
+Kafka добавлен как отдельный контейнер.
 
 ## Модули
 
@@ -33,7 +40,7 @@
 |--------|----------|------|
 | `accounts-service` | Микросервис аккаунтов | 8081 |
 | `cash-service` | Микросервис обналичивания | 8082 |
-| `notifications-service` | Сервис уведомлений | 8083 |
+| `notifications-service` | Сервис уведомлений (Kafka consumer) | — |
 | `transfer-service` | Сервис переводов | 8084 |
 | `front-app` | Фронт-приложение (Thymeleaf) | 8080 |
 | `eureka-server` | Service Discovery (только Docker) | 8761 |
@@ -46,6 +53,7 @@
 - Spring Boot 3.5.7
 - Spring Security OAuth 2.0 (Authorization Code + Client Credentials)
 - Spring Data JPA + PostgreSQL
+- **Apache Kafka** (межсервисное взаимодействие с Notifications)
 - Thymeleaf
 - Keycloak (сервер авторизации)
 - Docker / Docker Compose
@@ -183,7 +191,7 @@ helm install my-bank . --namespace my-bank --create-namespace \
 ### 1. Поднять инфраструктуру
 
 ```bash
-docker compose up keycloak accounts-db -d
+docker compose up keycloak accounts-db kafka -d
 ```
 
 ### 2. Запустить сервисы из IDE
@@ -242,6 +250,7 @@ docker compose down -v
 ```
 
 Тесты автоматически отключают Eureka и Config Server через test-профиль.
+Kafka-тесты используют `@EmbeddedKafka` для интеграционного тестирования.
 
 ### Helm chart тесты
 
@@ -283,13 +292,25 @@ helm/my-bank/
 │       └── test-db.yaml
 └── charts/
     ├── accounts-db/           # PostgreSQL (StatefulSet)
+    ├── kafka/                 # Apache Kafka KRaft (StatefulSet)
     ├── keycloak/              # Keycloak (Deployment + NodePort)
     ├── accounts-service/      # Deployment + Service + ConfigMap + Secret
     ├── cash-service/
     ├── transfer-service/
-    ├── notifications-service/
+    ├── notifications-service/ # Deployment + ConfigMap (без Service — только Kafka)
     └── front-app/             # Deployment + NodePort Service
 ```
+
+---
+
+## Kafka Topics
+
+| Topic | Producer | Consumer |
+|-------|----------|----------|
+| `notifications.account-updated` | accounts-service | notifications-service |
+| `notifications.transfer` | transfer-service | notifications-service |
+| `notifications.cash-deposit` | cash-service | notifications-service |
+| `notifications.cash-withdraw` | cash-service | notifications-service |
 
 ---
 
@@ -310,11 +331,10 @@ helm/my-bank/
 | Компонент | Flow | Назначение |
 |-----------|------|-----------|
 | Front App | Authorization Code | Пользовательская авторизация |
-| Accounts Service | Client Credentials | Запросы в Notifications |
-| Cash Service | Client Credentials | Запросы в Accounts и Notifications |
-| Transfer Service | Client Credentials | Запросы в Accounts и Notifications |
+| Cash Service | Client Credentials | Запросы в Accounts |
+| Transfer Service | Client Credentials | Запросы в Accounts |
 | Ingress | — | Маршрутизация (без JWT-валидации) |
-| Notifications | Resource Server | Валидация JWT (scope: notifications) |
+| Notifications | Kafka Consumer | Получение событий через Kafka |
 
 ---
 

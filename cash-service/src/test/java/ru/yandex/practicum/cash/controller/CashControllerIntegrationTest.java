@@ -7,14 +7,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.cash.client.AccountsClient;
-import ru.yandex.practicum.cash.client.NotificationsClient;
 import ru.yandex.practicum.cash.config.TestSecurityConfig;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -33,11 +36,12 @@ class CashControllerIntegrationTest {
     private AccountsClient accountsClient;
 
     @MockBean
-    private NotificationsClient notificationsClient;
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
     @Test
     @WithMockUser
     void processCash_deposit_returnsUpdatedAccount() throws Exception {
+        when(kafkaTemplate.send(anyString(), anyString(), any())).thenReturn(CompletableFuture.completedFuture(null));
         when(accountsClient.deposit("ivanov", 100)).thenReturn(Map.of("login", "ivanov", "sum", 200));
 
         mockMvc.perform(post("/cash/ivanov").with(csrf())
@@ -52,6 +56,7 @@ class CashControllerIntegrationTest {
     @Test
     @WithMockUser
     void processCash_withdraw_returnsUpdatedAccount() throws Exception {
+        when(kafkaTemplate.send(anyString(), anyString(), any())).thenReturn(CompletableFuture.completedFuture(null));
         when(accountsClient.withdraw("ivanov", 30)).thenReturn(Map.of("login", "ivanov", "sum", 70));
 
         mockMvc.perform(post("/cash/ivanov").with(csrf())

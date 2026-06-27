@@ -6,14 +6,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import ru.yandex.practicum.accounts.client.NotificationsClient;
 import ru.yandex.practicum.accounts.config.TestSecurityConfig;
 import ru.yandex.practicum.accounts.model.Account;
 import ru.yandex.practicum.accounts.repository.AccountRepository;
 
 import java.time.LocalDate;
+import java.util.concurrent.CompletableFuture;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @SpringBootTest
 @WithMockUser
@@ -27,11 +36,19 @@ public class BaseContractTest {
     private AccountRepository accountRepository;
 
     @MockBean
-    private NotificationsClient notificationsClient;
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
     @BeforeEach
     void setUp() {
-        RestAssuredMockMvc.webAppContextSetup(context);
+        when(kafkaTemplate.send(anyString(), anyString(), any())).thenReturn(CompletableFuture.completedFuture(null));
+
+        RestAssuredMockMvc.mockMvc(
+                MockMvcBuilders.webAppContextSetup(context)
+                        .apply(SecurityMockMvcConfigurers.springSecurity())
+                        .defaultRequest(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/")
+                                .with(csrf()).with(user("test")))
+                        .build()
+        );
 
         accountRepository.deleteAll();
 
