@@ -59,6 +59,10 @@ Kafka добавлен как отдельный контейнер.
 - Docker / Docker Compose
 - **Kubernetes + Helm**
 - **NGINX Ingress Controller**
+- **Micrometer Tracing + Zipkin** (распределённый трейсинг)
+- **Micrometer + Prometheus** (метрики)
+- **ELK Stack** (Elasticsearch + Logstash + Kibana — логирование)
+- **Grafana** (визуализация метрик и алерты)
 - Lombok
 - Maven (multi-module)
 
@@ -193,6 +197,18 @@ helm install my-bank . --namespace my-bank --create-namespace \
 ```bash
 docker compose up keycloak accounts-db kafka -d
 ```
+
+### 1.1. Поднять мониторинг (опционально)
+
+```bash
+cd monitoring
+docker compose up -d
+```
+
+- Zipkin: http://localhost:9411
+- Prometheus: http://localhost:9090
+- Grafana: http://localhost:3000 (admin/admin)
+- Kibana: http://localhost:5601
 
 ### 2. Запустить сервисы из IDE
 
@@ -361,3 +377,53 @@ spec:
   externalName: keycloak.example.com
 ```
 И обновите `global.keycloak.issuerUri` в `values.yaml`.
+
+---
+
+## Мониторинг
+
+### Компоненты
+
+| Компонент | Назначение | URL |
+|-----------|-----------|-----|
+| Zipkin | Распределённый трейсинг | http://localhost:9411 |
+| Prometheus | Сбор метрик | http://localhost:9090 |
+| Grafana | Дашборды и алерты | http://localhost:3000 |
+| Elasticsearch | Хранение логов | http://localhost:9200 |
+| Logstash | Сбор и обработка логов | localhost:5044 |
+| Kibana | Просмотр логов | http://localhost:5601 |
+
+### Трейсинг (Zipkin)
+
+Каждый сервис:
+- Генерирует/пропагирует trace ID и span ID через HTTP-заголовки (B3 propagation)
+- Создаёт дочерние спаны для запросов в БД и Apache Kafka
+- Отправляет трейсы в Zipkin через Micrometer Tracing + Brave
+
+### Метрики (Prometheus + Grafana)
+
+Каждый сервис экспортирует через `/actuator/prometheus`:
+- HTTP-метрики (RPS, 4xx, 5xx, гистограммы latency)
+- JVM-метрики (heap, threads, GC)
+- Стандартные метрики Spring Boot
+
+Алерты настроены на:
+- High 5xx error rate (>5%)
+- High latency (p95 > 2s)
+- Service down
+- High JVM heap usage (>90%)
+
+### Логирование (ELK)
+
+Каждый сервис:
+- Логирует через SLF4J + Logback
+- Включает traceId и spanId в каждую запись лога
+- Отправляет логи в Logstash через TCP (logstash-logback-encoder)
+- Логи доступны для просмотра в Kibana
+
+### Запуск мониторинга
+
+```bash
+cd monitoring
+docker compose up -d
+```
