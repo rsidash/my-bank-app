@@ -1,8 +1,9 @@
 package ru.yandex.practicum.transfer.service;
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.yandex.practicum.transfer.client.AccountsClient;
@@ -23,8 +24,13 @@ class TransferServiceTest {
     @Mock
     private NotificationsClient notificationsClient;
 
-    @InjectMocks
     private TransferService transferService;
+
+    @BeforeEach
+    void setUp() {
+        transferService = new TransferService(accountsClient, notificationsClient, new SimpleMeterRegistry());
+        transferService.initMetrics();
+    }
 
     @Test
     void transfer_callsAccountsAndSendsKafkaNotification() {

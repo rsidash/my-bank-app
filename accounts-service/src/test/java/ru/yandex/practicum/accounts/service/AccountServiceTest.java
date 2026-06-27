@@ -1,9 +1,9 @@
 package ru.yandex.practicum.accounts.service;
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.yandex.practicum.accounts.model.Account;
@@ -24,13 +24,14 @@ class AccountServiceTest {
     @Mock
     private AccountRepository accountRepository;
 
-    @InjectMocks
     private AccountService accountService;
-
     private Account testAccount;
 
     @BeforeEach
     void setUp() {
+        accountService = new AccountService(accountRepository, new SimpleMeterRegistry());
+        accountService.initMetrics();
+
         testAccount = new Account();
         testAccount.setId(1L);
         testAccount.setLogin("ivanov");
