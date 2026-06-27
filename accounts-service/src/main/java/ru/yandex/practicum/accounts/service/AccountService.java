@@ -1,5 +1,8 @@
 package ru.yandex.practicum.accounts.service;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +17,24 @@ import java.util.List;
 public class AccountService {
 
     private final AccountRepository accountRepository;
+    private final MeterRegistry registry;
+
+    private Counter depositsCounter;
+    private Counter withdrawalsCounter;
+    private Counter transfersCounter;
+    private Counter accountUpdatesCounter;
+
+    @PostConstruct
+    public void initMetrics() {
+        depositsCounter = Counter.builder("accounts.deposits.total")
+                .description("Total number of deposit operations").register(registry);
+        withdrawalsCounter = Counter.builder("accounts.withdrawals.total")
+                .description("Total number of withdrawal operations").register(registry);
+        transfersCounter = Counter.builder("accounts.transfers.total")
+                .description("Total number of transfer operations").register(registry);
+        accountUpdatesCounter = Counter.builder("accounts.updates.total")
+                .description("Total number of account profile updates").register(registry);
+    }
 
     public Account getAccount(String login) {
         return accountRepository.findByLogin(login)
@@ -25,6 +46,7 @@ public class AccountService {
         Account account = getAccount(login);
         account.setName(name);
         account.setBirthdate(birthdate);
+        accountUpdatesCounter.increment();
         return accountRepository.save(account);
     }
 
@@ -36,6 +58,7 @@ public class AccountService {
     public Account deposit(String login, int amount) {
         Account account = getAccount(login);
         account.setSum(account.getSum() + amount);
+        depositsCounter.increment();
         return accountRepository.save(account);
     }
 
@@ -46,6 +69,7 @@ public class AccountService {
             throw new IllegalStateException("Недостаточно средств на счету");
         }
         account.setSum(account.getSum() - amount);
+        withdrawalsCounter.increment();
         return accountRepository.save(account);
     }
 
@@ -60,5 +84,6 @@ public class AccountService {
         to.setSum(to.getSum() + amount);
         accountRepository.save(from);
         accountRepository.save(to);
+        transfersCounter.increment();
     }
 }
