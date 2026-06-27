@@ -15,3 +15,9 @@ data:
   SPRING_KAFKA_BOOTSTRAP_SERVERS: "{{ .Release.Name }}-kafka:9092"
   SPRING_KAFKA_PRODUCER_KEY_SERIALIZER: org.apache.kafka.common.serialization.StringSerializer
   SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER: org.springframework.kafka.support.serializer.JsonSerializer
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,prometheus,info
+  MANAGEMENT_METRICS_DISTRIBUTION_PERCENTILES__HISTOGRAM_HTTP_SERVER_REQUESTS: "true"
+  MANAGEMENT_TRACING_SAMPLING_PROBABILITY: "1.0"
+  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: "http://{{ .Release.Name }}-zipkin:9411/api/v2/spans"
+  LOGSTASH_HOST: "{{ .Release.Name }}-logstash"
+  LOGSTASH_PORT: "5044"
