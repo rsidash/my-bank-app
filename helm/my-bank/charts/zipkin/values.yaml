@@ -1,0 +1,4 @@
+image:
+  repository: openzipkin/zipkin
+  tag: "3"
+  pullPolicy: IfNotPresent
