@@ -4,10 +4,10 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.notifications.event.AccountUpdatedEvent;
-import ru.yandex.practicum.notifications.event.CashDepositEvent;
-import ru.yandex.practicum.notifications.event.CashWithdrawEvent;
-import ru.yandex.practicum.notifications.event.TransferEvent;
+import ru.yandex.practicum.core.event.AccountUpdatedEvent;
+import ru.yandex.practicum.core.event.CashDepositEvent;
+import ru.yandex.practicum.core.event.CashWithdrawEvent;
+import ru.yandex.practicum.core.event.TransferEvent;
 
 @Slf4j
 @Service

@@ -22,6 +22,7 @@
 	</properties>
 
 	<modules>
+		<module>my-bank-core</module>
 		<module>eureka-server</module>
 		<module>config-server</module>
 		<module>gateway</module>

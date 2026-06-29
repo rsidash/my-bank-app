@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.cash.event.CashDepositEvent;
-import ru.yandex.practicum.cash.event.CashWithdrawEvent;
-import ru.yandex.practicum.cash.event.KafkaTopics;
+import ru.yandex.practicum.core.event.CashDepositEvent;
+import ru.yandex.practicum.core.event.CashWithdrawEvent;
+import ru.yandex.practicum.core.event.KafkaTopics;
 
 @Slf4j
 @Component

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.notifications.event;
+package ru.yandex.practicum.core.event;
 
 public interface KafkaTopics {
     String ACCOUNT_UPDATED = "notifications.account-updated";

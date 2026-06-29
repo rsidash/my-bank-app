@@ -3,11 +3,11 @@ package ru.yandex.practicum.notifications.listener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.notifications.event.AccountUpdatedEvent;
-import ru.yandex.practicum.notifications.event.CashDepositEvent;
-import ru.yandex.practicum.notifications.event.CashWithdrawEvent;
-import ru.yandex.practicum.notifications.event.KafkaTopics;
-import ru.yandex.practicum.notifications.event.TransferEvent;
+import ru.yandex.practicum.core.event.AccountUpdatedEvent;
+import ru.yandex.practicum.core.event.CashDepositEvent;
+import ru.yandex.practicum.core.event.CashWithdrawEvent;
+import ru.yandex.practicum.core.event.KafkaTopics;
+import ru.yandex.practicum.core.event.TransferEvent;
 import ru.yandex.practicum.notifications.service.NotificationService;
 
 @Component
