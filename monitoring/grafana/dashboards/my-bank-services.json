@@ -1,0 +1,114 @@
+{
+  "id": null,
+  "uid": "my-bank-services",
+  "title": "My Bank - Spring Boot Services",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "title": "HTTP RPS",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count[1m])) by (job)",
+          "legendFormat": "{{job}}"
+        }
+      ]
+    },
+    {
+      "title": "HTTP 4xx Rate",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count{status=~\"4..\"}[1m])) by (job)",
+          "legendFormat": "{{job}}"
+        }
+      ]
+    },
+    {
+      "title": "HTTP 5xx Rate",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count{status=~\"5..\"}[1m])) by (job)",
+          "legendFormat": "{{job}}"
+        }
+      ]
+    },
+    {
+      "title": "HTTP Latency p95",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket[5m])) by (le, job))",
+          "legendFormat": "{{job}}"
+        }
+      ]
+    },
+    {
+      "title": "JVM Heap Used",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+      "targets": [
+        {
+          "expr": "jvm_memory_used_bytes{area=\"heap\"}",
+          "legendFormat": "{{job}}"
+        }
+      ]
+    },
+    {
+      "title": "JVM Threads",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+      "targets": [
+        {
+          "expr": "jvm_threads_live_threads",
+          "legendFormat": "{{job}}"
+        }
+      ]
+    },
+    {
+      "title": "Accounts - Operations Total",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
+      "targets": [
+        {"expr": "rate(accounts_deposits_total[1m])", "legendFormat": "deposits"},
+        {"expr": "rate(accounts_withdrawals_total[1m])", "legendFormat": "withdrawals"},
+        {"expr": "rate(accounts_transfers_total[1m])", "legendFormat": "transfers"},
+        {"expr": "rate(accounts_updates_total[1m])", "legendFormat": "updates"}
+      ]
+    },
+    {
+      "title": "Cash - Operations Total",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24},
+      "targets": [
+        {"expr": "rate(cash_operations_total{type=\"deposit\"}[1m])", "legendFormat": "deposit"},
+        {"expr": "rate(cash_operations_total{type=\"withdraw\"}[1m])", "legendFormat": "withdraw"}
+      ]
+    },
+    {
+      "title": "Transfers - Count & Amount",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 32},
+      "targets": [
+        {"expr": "rate(transfers_total[1m])", "legendFormat": "transfers/sec"},
+        {"expr": "rate(transfers_amount_sum[1m])", "legendFormat": "amount/sec"}
+      ]
+    },
+    {
+      "title": "Notifications - Processed by Type",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 32},
+      "targets": [
+        {"expr": "rate(notifications_processed_total[1m])", "legendFormat": "{{type}}"}
+      ]
+    }
+  ],
+  "time": {"from": "now-1h", "to": "now"},
+  "refresh": "10s"
+}

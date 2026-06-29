@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-logstash-config
+data:
+  logstash.conf: |
+    input {
+      tcp {
+        port => 5044
+        codec => json_lines
+      }
+    }
+    filter {
+      mutate {
+        rename => { "traceId" => "trace_id" }
+        rename => { "spanId" => "span_id" }
+      }
+    }
+    output {
+      elasticsearch {
+        hosts => ["http://{{ .Release.Name }}-elasticsearch:9200"]
+        index => "my-bank-logs-%{+YYYY.MM.dd}"
+      }
+    }

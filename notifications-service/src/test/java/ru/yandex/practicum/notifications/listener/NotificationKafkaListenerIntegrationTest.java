@@ -7,10 +7,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
-import ru.yandex.practicum.notifications.event.AccountUpdatedEvent;
-import ru.yandex.practicum.notifications.event.CashDepositEvent;
-import ru.yandex.practicum.notifications.event.CashWithdrawEvent;
-import ru.yandex.practicum.notifications.event.TransferEvent;
+import ru.yandex.practicum.core.event.AccountUpdatedEvent;
+import ru.yandex.practicum.core.event.CashDepositEvent;
+import ru.yandex.practicum.core.event.CashWithdrawEvent;
+import ru.yandex.practicum.core.event.TransferEvent;
 import ru.yandex.practicum.notifications.service.NotificationService;
 
 import java.util.concurrent.TimeUnit;

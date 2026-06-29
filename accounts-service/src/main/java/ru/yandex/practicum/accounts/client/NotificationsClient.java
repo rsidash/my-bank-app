@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.accounts.event.AccountUpdatedEvent;
-import ru.yandex.practicum.accounts.event.KafkaTopics;
+import ru.yandex.practicum.core.event.AccountUpdatedEvent;
+import ru.yandex.practicum.core.event.KafkaTopics;
 
 @Slf4j
 @Component

@@ -1,8 +1,9 @@
 package ru.yandex.practicum.cash.service;
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.yandex.practicum.cash.client.AccountsClient;
@@ -23,8 +24,12 @@ class CashServiceTest {
     @Mock
     private NotificationsClient notificationsClient;
 
-    @InjectMocks
     private CashService cashService;
+
+    @BeforeEach
+    void setUp() {
+        cashService = new CashService(accountsClient, notificationsClient, new SimpleMeterRegistry());
+    }
 
     @Test
     void deposit_callsAccountsAndNotifications() {

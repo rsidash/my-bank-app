@@ -1,0 +1,4 @@
+image:
+  repository: kibana
+  tag: "8.14.0"
+  pullPolicy: IfNotPresent
