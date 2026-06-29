@@ -2,8 +2,6 @@ package ru.yandex.practicum.accounts.service;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.accounts.model.Account;
@@ -13,26 +11,23 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class AccountService {
 
     private final AccountRepository accountRepository;
-    private final MeterRegistry registry;
+    private final Counter depositsCounter;
+    private final Counter withdrawalsCounter;
+    private final Counter transfersCounter;
+    private final Counter accountUpdatesCounter;
 
-    private Counter depositsCounter;
-    private Counter withdrawalsCounter;
-    private Counter transfersCounter;
-    private Counter accountUpdatesCounter;
-
-    @PostConstruct
-    public void initMetrics() {
-        depositsCounter = Counter.builder("accounts.deposits.total")
+    public AccountService(AccountRepository accountRepository, MeterRegistry registry) {
+        this.accountRepository = accountRepository;
+        this.depositsCounter = Counter.builder("accounts.deposits.total")
                 .description("Total number of deposit operations").register(registry);
-        withdrawalsCounter = Counter.builder("accounts.withdrawals.total")
+        this.withdrawalsCounter = Counter.builder("accounts.withdrawals.total")
                 .description("Total number of withdrawal operations").register(registry);
-        transfersCounter = Counter.builder("accounts.transfers.total")
+        this.transfersCounter = Counter.builder("accounts.transfers.total")
                 .description("Total number of transfer operations").register(registry);
-        accountUpdatesCounter = Counter.builder("accounts.updates.total")
+        this.accountUpdatesCounter = Counter.builder("accounts.updates.total")
                 .description("Total number of account profile updates").register(registry);
     }
 

@@ -30,7 +30,6 @@ class AccountServiceTest {
     @BeforeEach
     void setUp() {
         accountService = new AccountService(accountRepository, new SimpleMeterRegistry());
-        accountService.initMetrics();
 
         testAccount = new Account();
         testAccount.setId(1L);

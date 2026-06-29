@@ -29,7 +29,6 @@ class TransferServiceTest {
     @BeforeEach
     void setUp() {
         transferService = new TransferService(accountsClient, notificationsClient, new SimpleMeterRegistry());
-        transferService.initMetrics();
     }
 
     @Test

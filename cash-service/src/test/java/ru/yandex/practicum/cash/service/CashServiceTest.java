@@ -29,7 +29,6 @@ class CashServiceTest {
     @BeforeEach
     void setUp() {
         cashService = new CashService(accountsClient, notificationsClient, new SimpleMeterRegistry());
-        cashService.initMetrics();
     }
 
     @Test

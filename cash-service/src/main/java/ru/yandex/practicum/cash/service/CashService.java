@@ -2,8 +2,6 @@ package ru.yandex.practicum.cash.service;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.cash.client.AccountsClient;
 import ru.yandex.practicum.cash.client.NotificationsClient;
@@ -11,21 +9,19 @@ import ru.yandex.practicum.cash.client.NotificationsClient;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class CashService {
 
     private final AccountsClient accountsClient;
     private final NotificationsClient notificationsClient;
-    private final MeterRegistry registry;
+    private final Counter depositCounter;
+    private final Counter withdrawCounter;
 
-    private Counter depositCounter;
-    private Counter withdrawCounter;
-
-    @PostConstruct
-    public void initMetrics() {
-        depositCounter = Counter.builder("cash.operations.total")
+    public CashService(AccountsClient accountsClient, NotificationsClient notificationsClient, MeterRegistry registry) {
+        this.accountsClient = accountsClient;
+        this.notificationsClient = notificationsClient;
+        this.depositCounter = Counter.builder("cash.operations.total")
                 .tag("type", "deposit").description("Total cash deposit operations").register(registry);
-        withdrawCounter = Counter.builder("cash.operations.total")
+        this.withdrawCounter = Counter.builder("cash.operations.total")
                 .tag("type", "withdraw").description("Total cash withdraw operations").register(registry);
     }
 
